@@ -18,9 +18,9 @@ namespace MauiPlate
                 })
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                    fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
+                    fonts.AddFont("LXGWWenKai-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("LXGWWenKai-Bold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("LXGWWenKai-Bold.ttf", "SegoeSemibold");
                     fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
                 });
 
