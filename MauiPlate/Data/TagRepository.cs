@@ -37,7 +37,7 @@ namespace MauiPlate.Data
                 var createTableCmd = connection.CreateCommand();
                 createTableCmd.CommandText = @"
             CREATE TABLE IF NOT EXISTS Tag (
-                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Title TEXT NOT NULL,
                 Color TEXT NOT NULL
             );";
@@ -91,7 +91,7 @@ namespace MauiPlate.Data
         /// <summary>
         /// Retrieves a list of tags associated with a specific project.
         /// </summary>
-        /// <param name="projectID">The ID of the project.</param>
+        /// <param name="projectID">The Id of the project.</param>
         /// <returns>A list of <see cref="Tag"/> objects.</returns>
         public async Task<List<Tag>> ListAsync(int projectID)
         {
@@ -103,7 +103,7 @@ namespace MauiPlate.Data
             selectCmd.CommandText = @"
         SELECT t.*
         FROM Tag t
-        JOIN ProjectsTags pt ON t.ID = pt.TagID
+        JOIN ProjectsTags pt ON t.Id = pt.TagID
         WHERE pt.ProjectID = @ProjectID";
             selectCmd.Parameters.AddWithValue("ProjectID", projectID);
 
@@ -124,9 +124,9 @@ namespace MauiPlate.Data
         }
 
         /// <summary>
-        /// Retrieves a specific tag by its ID.
+        /// Retrieves a specific tag by its Id.
         /// </summary>
-        /// <param name="id">The ID of the tag.</param>
+        /// <param name="id">The Id of the tag.</param>
         /// <returns>A <see cref="Tag"/> object if found; otherwise, null.</returns>
         public async Task<Tag?> GetAsync(int id)
         {
@@ -135,7 +135,7 @@ namespace MauiPlate.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Tag WHERE ID = @id";
+            selectCmd.CommandText = "SELECT * FROM Tag WHERE Id = @id";
             selectCmd.Parameters.AddWithValue("@id", id);
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -153,10 +153,10 @@ namespace MauiPlate.Data
         }
 
         /// <summary>
-        /// Saves a tag to the database. If the tag ID is 0, a new tag is created; otherwise, the existing tag is updated.
+        /// Saves a tag to the database. If the tag Id is 0, a new tag is created; otherwise, the existing tag is updated.
         /// </summary>
         /// <param name="item">The tag to save.</param>
-        /// <returns>The ID of the saved tag.</returns>
+        /// <returns>The Id of the saved tag.</returns>
         public async Task<int> SaveItemAsync(Tag item)
         {
             await Init();
@@ -173,8 +173,8 @@ namespace MauiPlate.Data
             else
             {
                 saveCmd.CommandText = @"
-            UPDATE Tag SET Title = @Title, Color = @Color WHERE ID = @ID";
-                saveCmd.Parameters.AddWithValue("@ID", item.ID);
+            UPDATE Tag SET Title = @Title, Color = @Color WHERE Id = @Id";
+                saveCmd.Parameters.AddWithValue("@Id", item.ID);
             }
 
             saveCmd.Parameters.AddWithValue("@Title", item.Title);
@@ -193,7 +193,7 @@ namespace MauiPlate.Data
         /// Saves a tag to the database and associates it with a specific project.
         /// </summary>
         /// <param name="item">The tag to save.</param>
-        /// <param name="projectID">The ID of the project.</param>
+        /// <param name="projectID">The Id of the project.</param>
         /// <returns>The number of rows affected.</returns>
         public async Task<int> SaveItemAsync(Tag item, int projectID)
         {
@@ -224,7 +224,7 @@ namespace MauiPlate.Data
             await connection.OpenAsync();
 
             var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = "DELETE FROM Tag WHERE ID = @id";
+            deleteCmd.CommandText = "DELETE FROM Tag WHERE Id = @id";
             deleteCmd.Parameters.AddWithValue("@id", item.ID);
 
             return await deleteCmd.ExecuteNonQueryAsync();
@@ -234,7 +234,7 @@ namespace MauiPlate.Data
         /// Deletes a tag from a specific project in the database.
         /// </summary>
         /// <param name="item">The tag to delete.</param>
-        /// <param name="projectID">The ID of the project.</param>
+        /// <param name="projectID">The Id of the project.</param>
         /// <returns>The number of rows affected.</returns>
         public async Task<int> DeleteItemAsync(Tag item, int projectID)
         {

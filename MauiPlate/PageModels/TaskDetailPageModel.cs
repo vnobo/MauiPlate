@@ -1,49 +1,40 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MauiPlate.Data;
 using MauiPlate.Models;
-using MauiPlate.Services;
 
 namespace MauiPlate.PageModels
 {
-    public partial class TaskDetailPageModel : ObservableObject, IQueryAttributable
+    public partial class TaskDetailPageModel(
+        ProjectRepository projectRepository,
+        TaskRepository taskRepository,
+        ModalErrorHandler errorHandler)
+        : ObservableObject, IQueryAttributable
     {
         public const string ProjectQueryKey = "project";
         private ProjectTask? _task;
         private bool _canDelete;
-        private readonly ProjectRepository _projectRepository;
-        private readonly TaskRepository _taskRepository;
-        private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
-        private string _title = string.Empty;
+        public partial string Title { get; set; }= string.Empty;
 
         [ObservableProperty]
-        private bool _isCompleted;
+        public partial bool IsCompleted { get; set; }
+        [ObservableProperty]
+        public partial List<Project> Projects { get; set; } = [];
 
         [ObservableProperty]
-        private List<Project> _projects = [];
+        public partial Project? Project { get; set; }
 
         [ObservableProperty]
-        private Project? _project;
-
-        [ObservableProperty]
-        private int _selectedProjectIndex = -1;
+        public partial int SelectedProjectIndex { get; set; } = -1;
 
 
         [ObservableProperty]
-        private bool _isExistingProject;
-
-        public TaskDetailPageModel(ProjectRepository projectRepository, TaskRepository taskRepository, ModalErrorHandler errorHandler)
-        {
-            _projectRepository = projectRepository;
-            _taskRepository = taskRepository;
-            _errorHandler = errorHandler;
-        }
+        public partial bool IsExistingProject { get; set; }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            LoadTaskAsync(query).FireAndForgetSafeAsync(_errorHandler);
+            LoadTaskAsync(query).FireAndForgetSafeAsync(errorHandler);
         }
 
         private async Task LoadTaskAsync(IDictionary<string, object> query)
@@ -51,20 +42,20 @@ namespace MauiPlate.PageModels
             if (query.TryGetValue(ProjectQueryKey, out var project))
                 Project = (Project)project;
 
-            int taskId = 0;
+            var taskId = 0;
 
-            if (query.ContainsKey("id"))
+            if (query.TryGetValue("id", out object? value))
             {
-                taskId = Convert.ToInt32(query["id"]);
-                _task = await _taskRepository.GetAsync(taskId);
+                taskId = Convert.ToInt32(value);
+                _task = await taskRepository.GetAsync(taskId);
 
                 if (_task is null)
                 {
-                    _errorHandler.HandleError(new Exception($"Task Id {taskId} isn't valid."));
+                    errorHandler.HandleError(new Exception($"Task Id {taskId} isn't valid."));
                     return;
                 }
 
-                Project = await _projectRepository.GetAsync(_task.ProjectID);
+                Project = await projectRepository.GetAsync(_task.ProjectID);
             }
             else
             {
@@ -78,12 +69,12 @@ namespace MauiPlate.PageModels
             }
             else
             {
-                Projects = await _projectRepository.ListAsync();
+                Projects = await projectRepository.ListAsync();
                 IsExistingProject = true;
             }
 
             if (Project is not null)
-                SelectedProjectIndex = Projects.FindIndex(p => p.ID == Project.ID);
+                SelectedProjectIndex = Projects.FindIndex(p => p.ID ==Project.ID);
             else if (_task?.ProjectID > 0)
                 SelectedProjectIndex = Projects.FindIndex(p => p.ID == _task.ProjectID);
 
@@ -91,7 +82,7 @@ namespace MauiPlate.PageModels
             {
                 if (_task is null)
                 {
-                    _errorHandler.HandleError(new Exception($"Task with id {taskId} could not be found."));
+                    errorHandler.HandleError(new Exception($"Task with id {taskId} could not be found."));
                     return;
                 }
 
@@ -123,7 +114,7 @@ namespace MauiPlate.PageModels
         {
             if (_task is null)
             {
-                _errorHandler.HandleError(
+                errorHandler.HandleError(
                     new Exception("Task or project is null. The task could not be saved."));
 
                 return;
@@ -139,10 +130,10 @@ namespace MauiPlate.PageModels
             _task.IsCompleted = IsCompleted;
 
             if (Project?.ID == projectId && !Project.Tasks.Contains(_task))
-                Project.Tasks.Add(_task);
+               Project.Tasks.Add(_task);
 
             if (_task.ProjectID > 0)
-                _taskRepository.SaveItemAsync(_task).FireAndForgetSafeAsync(_errorHandler);
+                taskRepository.SaveItemAsync(_task).FireAndForgetSafeAsync(errorHandler);
 
             await Shell.Current.GoToAsync("..?refresh=true");
 
@@ -155,7 +146,7 @@ namespace MauiPlate.PageModels
         {
             if (_task is null || Project is null)
             {
-                _errorHandler.HandleError(
+                errorHandler.HandleError(
                     new Exception("Task is null. The task could not be deleted."));
 
                 return;
@@ -165,7 +156,7 @@ namespace MauiPlate.PageModels
                 Project.Tasks.Remove(_task);
 
             if (_task.ID > 0)
-                await _taskRepository.DeleteItemAsync(_task);
+                await taskRepository.DeleteItemAsync(_task);
 
             await Shell.Current.GoToAsync("..?refresh=true");
             await AppShell.DisplayToastAsync("Task deleted");

@@ -37,7 +37,7 @@ namespace MauiPlate.Data
                 var createTableCmd = connection.CreateCommand();
                 createTableCmd.CommandText = @"
             CREATE TABLE IF NOT EXISTS Task (
-                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Title TEXT NOT NULL,
                 IsCompleted INTEGER NOT NULL,
                 ProjectID INTEGER NOT NULL
@@ -85,7 +85,7 @@ namespace MauiPlate.Data
         /// <summary>
         /// Retrieves a list of tasks associated with a specific project.
         /// </summary>
-        /// <param name="projectId">The ID of the project.</param>
+        /// <param name="projectId">The Id of the project.</param>
         /// <returns>A list of <see cref="ProjectTask"/> objects.</returns>
         public async Task<List<ProjectTask>> ListAsync(int projectId)
         {
@@ -114,9 +114,9 @@ namespace MauiPlate.Data
         }
 
         /// <summary>
-        /// Retrieves a specific task by its ID.
+        /// Retrieves a specific task by its Id.
         /// </summary>
-        /// <param name="id">The ID of the task.</param>
+        /// <param name="id">The Id of the task.</param>
         /// <returns>A <see cref="ProjectTask"/> object if found; otherwise, null.</returns>
         public async Task<ProjectTask?> GetAsync(int id)
         {
@@ -125,7 +125,7 @@ namespace MauiPlate.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Task WHERE ID = @id";
+            selectCmd.CommandText = "SELECT * FROM Task WHERE Id = @id";
             selectCmd.Parameters.AddWithValue("@id", id);
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -144,10 +144,10 @@ namespace MauiPlate.Data
         }
 
         /// <summary>
-        /// Saves a task to the database. If the task ID is 0, a new task is created; otherwise, the existing task is updated.
+        /// Saves a task to the database. If the task Id is 0, a new task is created; otherwise, the existing task is updated.
         /// </summary>
         /// <param name="item">The task to save.</param>
-        /// <returns>The ID of the saved task.</returns>
+        /// <returns>The Id of the saved task.</returns>
         public async Task<int> SaveItemAsync(ProjectTask item)
         {
             await Init();
@@ -164,7 +164,7 @@ namespace MauiPlate.Data
             else
             {
                 saveCmd.CommandText = @"
-            UPDATE Task SET Title = @title, IsCompleted = @isCompleted, ProjectID = @projectId WHERE ID = @id";
+            UPDATE Task SET Title = @title, IsCompleted = @isCompleted, ProjectID = @projectId WHERE Id = @id";
                 saveCmd.Parameters.AddWithValue("@id", item.ID);
             }
 
@@ -193,7 +193,7 @@ namespace MauiPlate.Data
             await connection.OpenAsync();
 
             var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = "DELETE FROM Task WHERE ID = @id";
+            deleteCmd.CommandText = "DELETE FROM Task WHERE Id = @id";
             deleteCmd.Parameters.AddWithValue("@id", item.ID);
 
             return await deleteCmd.ExecuteNonQueryAsync();

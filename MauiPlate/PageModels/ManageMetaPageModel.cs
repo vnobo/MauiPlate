@@ -7,30 +7,23 @@ using MauiPlate.Services;
 
 namespace MauiPlate.PageModels
 {
-    public partial class ManageMetaPageModel : ObservableObject
+    public partial class ManageMetaPageModel(
+        CategoryRepository categoryRepository,
+        TagRepository tagRepository,
+        SeedDataService seedDataService)
+        : ObservableObject
     {
-        private readonly CategoryRepository _categoryRepository;
-        private readonly TagRepository _tagRepository;
-        private readonly SeedDataService _seedDataService;
+        [ObservableProperty]
+        public partial ObservableCollection<Category> Categories { get; set; } = [];
 
         [ObservableProperty]
-        private ObservableCollection<Category> _categories = [];
-
-        [ObservableProperty]
-        private ObservableCollection<Tag> _tags = [];
-
-        public ManageMetaPageModel(CategoryRepository categoryRepository, TagRepository tagRepository, SeedDataService seedDataService)
-        {
-            _categoryRepository = categoryRepository;
-            _tagRepository = tagRepository;
-            _seedDataService = seedDataService;
-        }
+        public partial ObservableCollection<Tag> Tags { get; set; }= [];
 
         private async Task LoadData()
         {
-            var categoriesList = await _categoryRepository.ListAsync();
+            var categoriesList = await categoryRepository.ListAsync();
             Categories = new ObservableCollection<Category>(categoriesList);
-            var tagsList = await _tagRepository.ListAsync();
+            var tagsList = await tagRepository.ListAsync();
             Tags = new ObservableCollection<Tag>(tagsList);
         }
 
@@ -43,7 +36,7 @@ namespace MauiPlate.PageModels
         {
             foreach (var category in Categories)
             {
-                await _categoryRepository.SaveItemAsync(category);
+                await categoryRepository.SaveItemAsync(category);
             }
 
             await AppShell.DisplayToastAsync("Categories saved");
@@ -53,7 +46,7 @@ namespace MauiPlate.PageModels
         private async Task DeleteCategory(Category category)
         {
             Categories.Remove(category);
-            await _categoryRepository.DeleteItemAsync(category);
+            await categoryRepository.DeleteItemAsync(category);
             await AppShell.DisplayToastAsync("Category deleted");
         }
 
@@ -62,7 +55,7 @@ namespace MauiPlate.PageModels
         {
             var category = new Category();
             Categories.Add(category);
-            await _categoryRepository.SaveItemAsync(category);
+            await categoryRepository.SaveItemAsync(category);
             await AppShell.DisplayToastAsync("Category added");
         }
 
@@ -71,7 +64,7 @@ namespace MauiPlate.PageModels
         {
             foreach (var tag in Tags)
             {
-                await _tagRepository.SaveItemAsync(tag);
+                await tagRepository.SaveItemAsync(tag);
             }
 
             await AppShell.DisplayToastAsync("Tags saved");
@@ -81,7 +74,7 @@ namespace MauiPlate.PageModels
         private async Task DeleteTag(Tag tag)
         {
             Tags.Remove(tag);
-            await _tagRepository.DeleteItemAsync(tag);
+            await tagRepository.DeleteItemAsync(tag);
             await AppShell.DisplayToastAsync("Tag deleted");
         }
 
@@ -90,7 +83,7 @@ namespace MauiPlate.PageModels
         {
             var tag = new Tag();
             Tags.Add(tag);
-            await _tagRepository.SaveItemAsync(tag);
+            await tagRepository.SaveItemAsync(tag);
             await AppShell.DisplayToastAsync("Tag added");
         }
 
@@ -98,7 +91,7 @@ namespace MauiPlate.PageModels
         private async Task Reset()
         {
             Preferences.Default.Remove("is_seeded");
-            await _seedDataService.LoadSeedDataAsync();
+            await seedDataService.LoadSeedDataAsync();
             Preferences.Default.Set("is_seeded", true);
             await Shell.Current.GoToAsync("//main");
         }

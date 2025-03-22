@@ -43,7 +43,7 @@ namespace MauiPlate.Data
                 var createTableCmd = connection.CreateCommand();
                 createTableCmd.CommandText = @"
             CREATE TABLE IF NOT EXISTS Project (
-                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL,
                 Description TEXT NOT NULL,
                 Icon TEXT NOT NULL,
@@ -97,9 +97,9 @@ namespace MauiPlate.Data
         }
 
         /// <summary>
-        /// Retrieves a specific project by its ID.
+        /// Retrieves a specific project by its Id.
         /// </summary>
-        /// <param name="id">The ID of the project.</param>
+        /// <param name="id">The Id of the project.</param>
         /// <returns>A <see cref="Project"/> object if found; otherwise, null.</returns>
         public async Task<Project?> GetAsync(int id)
         {
@@ -108,7 +108,7 @@ namespace MauiPlate.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Project WHERE ID = @id";
+            selectCmd.CommandText = "SELECT * FROM Project WHERE Id = @id";
             selectCmd.Parameters.AddWithValue("@id", id);
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -133,10 +133,10 @@ namespace MauiPlate.Data
         }
 
         /// <summary>
-        /// Saves a project to the database. If the project ID is 0, a new project is created; otherwise, the existing project is updated.
+        /// Saves a project to the database. If the project Id is 0, a new project is created; otherwise, the existing project is updated.
         /// </summary>
         /// <param name="item">The project to save.</param>
-        /// <returns>The ID of the saved project.</returns>
+        /// <returns>The Id of the saved project.</returns>
         public async Task<int> SaveItemAsync(Project item)
         {
             await Init();
@@ -156,8 +156,8 @@ namespace MauiPlate.Data
                 saveCmd.CommandText = @"
                 UPDATE Project
                 SET Name = @Name, Description = @Description, Icon = @Icon, CategoryID = @CategoryID
-                WHERE ID = @ID";
-                saveCmd.Parameters.AddWithValue("@ID", item.ID);
+                WHERE Id = @Id";
+                saveCmd.Parameters.AddWithValue("@Id", item.ID);
             }
 
             saveCmd.Parameters.AddWithValue("@Name", item.Name);
@@ -186,8 +186,8 @@ namespace MauiPlate.Data
             await connection.OpenAsync();
 
             var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = "DELETE FROM Project WHERE ID = @ID";
-            deleteCmd.Parameters.AddWithValue("@ID", item.ID);
+            deleteCmd.CommandText = "DELETE FROM Project WHERE Id = @Id";
+            deleteCmd.Parameters.AddWithValue("@Id", item.ID);
 
             return await deleteCmd.ExecuteNonQueryAsync();
         }

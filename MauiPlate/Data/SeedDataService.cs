@@ -52,7 +52,7 @@ namespace MauiPlate.Data
                         if (project.Category is not null)
                         {
                             await _categoryRepository.SaveItemAsync(project.Category);
-                            project.CategoryID = project.Category.ID;
+                            project.CategoryID = project.Category.Id;
                         }
 
                         await _projectRepository.SaveItemAsync(project);

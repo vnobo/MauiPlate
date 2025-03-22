@@ -13,35 +13,26 @@ namespace MauiPlate.PageModels
         private readonly TagRepository _tagRepository;
         private readonly ModalErrorHandler _errorHandler;
 
-        [ObservableProperty]
-        private string _name = string.Empty;
+        [ObservableProperty] public partial string Name { get; set; } = string.Empty;
+
+        [ObservableProperty] public partial string Description { get; set; } = string.Empty;
+
+        [ObservableProperty] public partial List<ProjectTask> Tasks { get; set; } = [];
+
+        [ObservableProperty] public partial List<Category> Categories { get; set; } = [];
+
+        [ObservableProperty] public partial Category? Category { get; set; }
+
+        [ObservableProperty] public partial int CategoryIndex { get; set; } = -1;
+
+        [ObservableProperty] public partial List<Tag> AllTags { get; set; } = [];
+
+        [ObservableProperty] public partial string Icon { get; set; } = FluentUI.ribbon_24_regular;
+
+        [ObservableProperty] public partial bool IsBusy { get; set; }
 
         [ObservableProperty]
-        private string _description = string.Empty;
-
-        [ObservableProperty]
-        private List<ProjectTask> _tasks = [];
-
-        [ObservableProperty]
-        private List<Category> _categories = [];
-
-        [ObservableProperty]
-        private Category? _category;
-
-        [ObservableProperty]
-        private int _categoryIndex = -1;
-
-        [ObservableProperty]
-        private List<Tag> _allTags = [];
-
-        [ObservableProperty]
-        private string _icon = FluentUI.ribbon_24_regular;
-
-        [ObservableProperty]
-        bool _isBusy;
-
-        [ObservableProperty]
-        private List<string> _icons =
+        public partial List<string> Icons { get; set; } =
         [
             FluentUI.ribbon_24_regular,
             FluentUI.ribbon_star_24_regular,
@@ -55,7 +46,8 @@ namespace MauiPlate.PageModels
         public bool HasCompletedTasks
             => _project?.Tasks.Any(t => t.IsCompleted) ?? false;
 
-        public ProjectDetailPageModel(ProjectRepository projectRepository, TaskRepository taskRepository, CategoryRepository categoryRepository, TagRepository tagRepository, ModalErrorHandler errorHandler)
+        public ProjectDetailPageModel(ProjectRepository projectRepository, TaskRepository taskRepository,
+            CategoryRepository categoryRepository, TagRepository tagRepository, ModalErrorHandler errorHandler)
         {
             _projectRepository = projectRepository;
             _taskRepository = taskRepository;
@@ -128,14 +120,15 @@ namespace MauiPlate.PageModels
                 Icon = _project.Icon;
 
                 Categories = await _categoryRepository.ListAsync();
-                Category = Categories?.FirstOrDefault(c => c.ID == _project.CategoryID);
-                CategoryIndex = Categories?.FindIndex(c => c.ID == _project.CategoryID) ?? -1;
+                Category  = Categories?.FirstOrDefault(c => c.Id == _project.CategoryID);
+                CategoryIndex = Categories?.FindIndex(c => c.Id == _project.CategoryID) ?? -1;
 
                 var allTags = await _tagRepository.ListAsync();
                 foreach (var tag in allTags)
                 {
                     tag.IsSelected = _project.Tags.Any(t => t.ID == tag.ID);
                 }
+
                 AllTags = new(allTags);
             }
             catch (Exception e)
@@ -170,7 +163,7 @@ namespace MauiPlate.PageModels
 
             _project.Name = Name;
             _project.Description = Description;
-            _project.CategoryID = Category?.ID ?? 0;
+            _project.CategoryID = Category?.Id ?? 0;
             _project.Icon = Icon ?? FluentUI.ribbon_24_regular;
             await _projectRepository.SaveItemAsync(_project);
 
@@ -212,8 +205,9 @@ namespace MauiPlate.PageModels
             // Pass the project so if this is a new project we can just add
             // the tasks to the project and then save them all from here.
             await Shell.Current.GoToAsync($"task",
-                new ShellNavigationQueryParameters(){
-                    {TaskDetailPageModel.ProjectQueryKey, _project}
+                new ShellNavigationQueryParameters()
+                {
+                    { TaskDetailPageModel.ProjectQueryKey, _project }
                 });
         }
 

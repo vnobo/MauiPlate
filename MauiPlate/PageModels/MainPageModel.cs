@@ -4,49 +4,33 @@ using MauiPlate.Models;
 
 namespace MauiPlate.PageModels
 {
-    public partial class MainPageModel : ObservableObject, IProjectTaskPageModel
+    public partial class MainPageModel(
+        SeedDataService seedDataService,
+        ProjectRepository projectRepository,
+        TaskRepository taskRepository,
+        CategoryRepository categoryRepository,
+        ModalErrorHandler errorHandler)
+        : ObservableObject, IProjectTaskPageModel
     {
         private bool _isNavigatedTo;
         private bool _dataLoaded;
-        private readonly ProjectRepository _projectRepository;
-        private readonly TaskRepository _taskRepository;
-        private readonly CategoryRepository _categoryRepository;
-        private readonly ModalErrorHandler _errorHandler;
-        private readonly SeedDataService _seedDataService;
 
-        [ObservableProperty]
-        private List<CategoryChartData> _todoCategoryData = [];
+        [ObservableProperty] public partial List<CategoryChartData> TodoCategoryData { get; set; } = [];
 
-        [ObservableProperty]
-        private List<Brush> _todoCategoryColors = [];
+        [ObservableProperty] public partial List<Brush> TodoCategoryColors { get; set; } = [];
 
-        [ObservableProperty]
-        private List<ProjectTask> _tasks = [];
+        [ObservableProperty] public partial List<ProjectTask> Tasks { get; set; } = [];
 
-        [ObservableProperty]
-        private List<Project> _projects = [];
+        [ObservableProperty] public partial List<Project> Projects { get; set; } = [];
 
-        [ObservableProperty]
-        bool _isBusy;
+        [ObservableProperty] public partial bool IsBusy { get;set; }
 
-        [ObservableProperty]
-        bool _isRefreshing;
+        [ObservableProperty] public partial bool IsRefreshing { get; set; }
 
-        [ObservableProperty]
-        private string _today = DateTime.Now.ToString("dddd, MMM d");
+        [ObservableProperty] public partial string Today { get; set; } = DateTime.Now.ToString("dddd, MMM d");
 
         public bool HasCompletedTasks
             => Tasks?.Any(t => t.IsCompleted) ?? false;
-
-        public MainPageModel(SeedDataService seedDataService, ProjectRepository projectRepository,
-            TaskRepository taskRepository, CategoryRepository categoryRepository, ModalErrorHandler errorHandler)
-        {
-            _projectRepository = projectRepository;
-            _taskRepository = taskRepository;
-            _categoryRepository = categoryRepository;
-            _errorHandler = errorHandler;
-            _seedDataService = seedDataService;
-        }
 
         private async Task LoadData()
         {
@@ -54,17 +38,17 @@ namespace MauiPlate.PageModels
             {
                 IsBusy = true;
 
-                Projects = await _projectRepository.ListAsync();
+                Projects = await projectRepository.ListAsync();
 
                 var chartData = new List<CategoryChartData>();
                 var chartColors = new List<Brush>();
 
-                var categories = await _categoryRepository.ListAsync();
+                var categories = await categoryRepository.ListAsync();
                 foreach (var category in categories)
                 {
                     chartColors.Add(category.ColorBrush);
 
-                    var ps = Projects.Where(p => p.CategoryID == category.ID).ToList();
+                    var ps = Projects.Where(p => p.CategoryID == category.Id).ToList();
                     int tasksCount = ps.SelectMany(p => p.Tasks).Count();
 
                     chartData.Add(new(category.Title, tasksCount));
@@ -73,7 +57,7 @@ namespace MauiPlate.PageModels
                 TodoCategoryData = chartData;
                 TodoCategoryColors = chartColors;
 
-                Tasks = await _taskRepository.ListAsync();
+                Tasks = await taskRepository.ListAsync();
             }
             finally
             {
@@ -105,7 +89,7 @@ namespace MauiPlate.PageModels
             }
             catch (Exception e)
             {
-                _errorHandler.HandleError(e);
+                errorHandler.HandleError(e);
             }
             finally
             {
@@ -126,7 +110,7 @@ namespace MauiPlate.PageModels
         {
             if (!_dataLoaded)
             {
-                await InitData(_seedDataService);
+                await InitData(seedDataService);
                 _dataLoaded = true;
                 await Refresh();
             }
@@ -141,7 +125,7 @@ namespace MauiPlate.PageModels
         private Task TaskCompleted(ProjectTask task)
         {
             OnPropertyChanged(nameof(HasCompletedTasks));
-            return _taskRepository.SaveItemAsync(task);
+            return taskRepository.SaveItemAsync(task);
         }
 
         [RelayCommand]
@@ -162,7 +146,7 @@ namespace MauiPlate.PageModels
             var completedTasks = Tasks.Where(t => t.IsCompleted).ToList();
             foreach (var task in completedTasks)
             {
-                await _taskRepository.DeleteItemAsync(task);
+                await taskRepository.DeleteItemAsync(task);
                 Tasks.Remove(task);
             }
 

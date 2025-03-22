@@ -37,7 +37,7 @@ namespace MauiPlate.Data
                 var createTableCmd = connection.CreateCommand();
                 createTableCmd.CommandText = @"
             CREATE TABLE IF NOT EXISTS Category (
-                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Title TEXT NOT NULL,
                 Color TEXT NOT NULL
             );";
@@ -71,7 +71,7 @@ namespace MauiPlate.Data
             {
                 categories.Add(new Category
                 {
-                    ID = reader.GetInt32(0),
+                    Id = reader.GetInt32(0),
                     Title = reader.GetString(1),
                     Color = reader.GetString(2)
                 });
@@ -81,9 +81,9 @@ namespace MauiPlate.Data
         }
 
         /// <summary>
-        /// Retrieves a specific category by its ID.
+        /// Retrieves a specific category by its Id.
         /// </summary>
-        /// <param name="id">The ID of the category.</param>
+        /// <param name="id">The Id of the category.</param>
         /// <returns>A <see cref="Category"/> object if found; otherwise, null.</returns>
         public async Task<Category?> GetAsync(int id)
         {
@@ -92,7 +92,7 @@ namespace MauiPlate.Data
             await connection.OpenAsync();
 
             var selectCmd = connection.CreateCommand();
-            selectCmd.CommandText = "SELECT * FROM Category WHERE ID = @id";
+            selectCmd.CommandText = "SELECT * FROM Category WHERE Id = @id";
             selectCmd.Parameters.AddWithValue("@id", id);
 
             await using var reader = await selectCmd.ExecuteReaderAsync();
@@ -100,7 +100,7 @@ namespace MauiPlate.Data
             {
                 return new Category
                 {
-                    ID = reader.GetInt32(0),
+                    Id = reader.GetInt32(0),
                     Title = reader.GetString(1),
                     Color = reader.GetString(2)
                 };
@@ -110,10 +110,10 @@ namespace MauiPlate.Data
         }
 
         /// <summary>
-        /// Saves a category to the database. If the category ID is 0, a new category is created; otherwise, the existing category is updated.
+        /// Saves a category to the database. If the category Id is 0, a new category is created; otherwise, the existing category is updated.
         /// </summary>
         /// <param name="item">The category to save.</param>
-        /// <returns>The ID of the saved category.</returns>
+        /// <returns>The Id of the saved category.</returns>
         public async Task<int> SaveItemAsync(Category item)
         {
             await Init();
@@ -121,7 +121,7 @@ namespace MauiPlate.Data
             await connection.OpenAsync();
 
             var saveCmd = connection.CreateCommand();
-            if (item.ID == 0)
+            if (item.Id == 0)
             {
                 saveCmd.CommandText = @"
                 INSERT INTO Category (Title, Color)
@@ -132,20 +132,20 @@ namespace MauiPlate.Data
             {
                 saveCmd.CommandText = @"
                 UPDATE Category SET Title = @Title, Color = @Color
-                WHERE ID = @ID";
-                saveCmd.Parameters.AddWithValue("@ID", item.ID);
+                WHERE Id = @Id";
+                saveCmd.Parameters.AddWithValue("@Id", item.Id);
             }
 
             saveCmd.Parameters.AddWithValue("@Title", item.Title);
             saveCmd.Parameters.AddWithValue("@Color", item.Color);
 
             var result = await saveCmd.ExecuteScalarAsync();
-            if (item.ID == 0)
+            if (item.Id == 0)
             {
-                item.ID = Convert.ToInt32(result);
+                item.Id = Convert.ToInt32(result);
             }
 
-            return item.ID;
+            return item.Id;
         }
 
         /// <summary>
@@ -160,8 +160,8 @@ namespace MauiPlate.Data
             await connection.OpenAsync();
 
             var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = "DELETE FROM Category WHERE ID = @id";
-            deleteCmd.Parameters.AddWithValue("@id", item.ID);
+            deleteCmd.CommandText = "DELETE FROM Category WHERE Id = @id";
+            deleteCmd.Parameters.AddWithValue("@id", item.Id);
 
             return await deleteCmd.ExecuteNonQueryAsync();
         }
