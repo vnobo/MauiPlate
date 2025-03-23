@@ -9,24 +9,25 @@
              xmlns:fonts="clr-namespace:Fonts"
              x:Class="MauiPlate.Pages.ProjectDetailPage"
              x:DataType="pageModels:ProjectDetailPageModel"
+             x:Name="ProjectDetailPageView"
              Title="Project">
 
     <ContentPage.Resources>
         <DataTemplate x:Key="NormalTagTemplate" x:DataType="models:Tag">
-                <Border StrokeShape="RoundRectangle 22" 
+            <Border StrokeShape="RoundRectangle 22" 
                         HeightRequest="44" 
                         StrokeThickness="0"
                         Background="{AppThemeBinding Light={StaticResource LightSecondaryBackground},Dark={StaticResource DarkSecondaryBackground}}" 
                         Padding="{OnPlatform '18,0,18,8',Android='18,0,18,0'}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ToggleTagCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectDetailPageModel}}, x:DataType=pageModels:ProjectDetailPageModel}" CommandParameter="{Binding .}"/>
-                        </Border.GestureRecognizers>
-                        <Label Text="{Binding Title}"
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleTagCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectDetailPageModel}}, x:DataType=pageModels:ProjectDetailPageModel}" CommandParameter="{Binding .}"/>
+                </Border.GestureRecognizers>
+                <Label Text="{Binding Title}"
                             TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground},Dark={StaticResource LightOnDarkBackground}}"
                             FontSize="{OnIdiom 16,Desktop=18}" 
                             VerticalOptions="Center"
                             VerticalTextAlignment="Center"/>
-                </Border>
+            </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="SelectedTagTemplate" x:DataType="models:Tag">
@@ -36,7 +37,7 @@
                         Background="{Binding DisplayColor}" 
                         Padding="{OnPlatform '18,0,18,8',Android='18,0,18,0'}">
                 <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding ToggleTagCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectDetailPageModel}}, x:DataType=pageModels:ProjectDetailPageModel}" CommandParameter="{Binding .}"/>
+                    <TapGestureRecognizer  Command="{Binding ToggleTagCommand, Source={RelativeSource AncestorType={x:Type pageModels:ProjectDetailPageModel}}, x:DataType=pageModels:ProjectDetailPageModel}" CommandParameter="{Binding .}"/>
                 </Border.GestureRecognizers>
                 <Label Text="{Binding Title}"
                     TextColor="{AppThemeBinding Light={StaticResource LightBackground},Dark={StaticResource DarkBackground}}" 
@@ -53,8 +54,7 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem
-            Text="Delete"
+        <ToolbarItem Text="Delete"
             Command="{Binding DeleteCommand}"
             Order="Primary"
             Priority="0"
@@ -113,7 +113,7 @@
                                         </VisualState>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
-                                
+
                                 <Label 
                                     Text="{Binding .}" 
                                     x:Name="IconImage"
@@ -123,14 +123,14 @@
                                     HorizontalOptions="Center"
                                     TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground},Dark={StaticResource LightOnDarkBackground}}"/>
                                 <BoxView x:Name="SelectedIndicator" Color="{StaticResource Primary}" HeightRequest="4" HorizontalOptions="Fill" Grid.Row="1"/>
-                            </Grid>                            
+                            </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="{StaticResource LayoutSpacing}"/>
                     </CollectionView.ItemsLayout>
                 </CollectionView>
-                
+
 
                 <Label 
                     Text="Tags" 
@@ -144,8 +144,7 @@
                         BindableLayout.ItemTemplateSelector="{StaticResource ChipDataTemplateSelector}"/>
                 </ScrollView>
 
-                <Button Text="Save" 
-                    HeightRequest="{OnIdiom 44, Desktop=60}"
+                <Button Text="Save"   HeightRequest="{OnIdiom 44, Desktop=60}"
                     Command="{Binding SaveCommand}" />
 
                 <Grid HeightRequest="44">
@@ -159,8 +158,7 @@
                         VerticalOptions="Center"
                         Aspect="Center"
                         HeightRequest="44"
-                        WidthRequest="44"
-                        IsVisible="{Binding HasCompletedTasks}"
+                        WidthRequest="44" IsVisible="{Binding HasCompletedTasks}"
                         Command="{Binding CleanTasksCommand}"
                         />
                 </Grid>
@@ -178,5 +176,5 @@
 
         <controls:AddButton Command="{Binding AddTaskCommand}" />
     </Grid>
-    
+
 </ContentPage>

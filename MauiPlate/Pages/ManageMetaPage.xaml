@@ -4,14 +4,17 @@
              xmlns:pageModels="clr-namespace:MauiPlate.PageModels"
              xmlns:models="clr-namespace:MauiPlate.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pages="clr-namespace:MauiPlate.Pages"
              x:DataType="pageModels:ManageMetaPageModel"
              x:Class="MauiPlate.Pages.ManageMetaPage"
+             x:Name="ManageMetaPageView"
              Title="Categories and Tags">
 
 
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
-                EventName="Appearing"                
+                EventName="Appearing" 
+                BindingContext="{Binding Path=BindingContext,Source={x:Reference ManageMetaPageView}, x:DataType=pages:ManageMetaPage}"          
                 Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
     <ContentPage.Resources>

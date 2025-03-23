@@ -4,12 +4,14 @@
              xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
              xmlns:pageModel="clr-namespace:MauiPlate.PageModels"
              xmlns:models="clr-namespace:MauiPlate.Models"
+             xmlns:pages="clr-namespace:MauiPlate.Pages"
              x:DataType="pageModel:TaskDetailPageModel"
              x:Class="MauiPlate.Pages.TaskDetailPage"
+             x:Name="TaskDetailPageView"
              Title="Task">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem
+        <ToolbarItem BindingContext="{Binding Path=BindingContext,Source={x:Reference TaskDetailPageView}, x:DataType=pages:TaskDetailPage}"
             Text="Delete"
             Command="{Binding DeleteCommand}"
             Order="Primary"

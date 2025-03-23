@@ -1,24 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pullToRefresh="clr-namespace:Syncfusion.Maui.Toolkit.PullToRefresh;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:pageModels="clr-namespace:MauiPlate.PageModels"             
              xmlns:models="clr-namespace:MauiPlate.Models"
              xmlns:controls="clr-namespace:MauiPlate.Pages.Controls"
-             xmlns:pullToRefresh="clr-namespace:Syncfusion.Maui.Toolkit.PullToRefresh;assembly=Syncfusion.Maui.Toolkit"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pages="clr-namespace:MauiPlate.Pages"
+             x:Name="MainPageView"
              x:Class="MauiPlate.Pages.MainPage"
              x:DataType="pageModels:MainPageModel"
              Title="{Binding Today}">
-
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
                 EventName="NavigatedTo"
+                BindingContext="{Binding Path=BindingContext,Source={x:Reference MainPageView}, x:DataType=pages:MainPage}" 
                 Command="{Binding NavigatedToCommand}" />
         <toolkit:EventToCommandBehavior
                 EventName="NavigatedFrom"
+                BindingContext="{Binding Path=BindingContext,Source={x:Reference MainPageView}, x:DataType=pages:MainPage}" 
                 Command="{Binding NavigatedFromCommand}" />
         <toolkit:EventToCommandBehavior
-                EventName="Appearing"                
+                EventName="Appearing"
+                BindingContext="{Binding Path=BindingContext,Source={x:Reference MainPageView}, x:DataType=pages:MainPage}" 
                 Command="{Binding AppearingCommand}" />
     </ContentPage.Behaviors>
 
@@ -29,14 +33,14 @@
     </ContentPage.Resources>
 
     <Grid>
-        <pullToRefresh:SfPullToRefresh
+        <pullToRefresh:SfPullToRefresh x:Name="PullToRefresh"
             IsRefreshing="{Binding IsRefreshing}"
             RefreshCommand="{Binding RefreshCommand}">
             <pullToRefresh:SfPullToRefresh.PullableContent>
                 <ScrollView>
                     <VerticalStackLayout Spacing="{StaticResource LayoutSpacing}" Padding="{StaticResource LayoutPadding}">
                         <controls:CategoryChart />
-                        <Label Text="Projects" Style="{StaticResource Title2}"/>
+                        <Label Text="项目" Style="{StaticResource Title2}"/>
                         <ScrollView Orientation="Horizontal" Margin="-30,0">
                             <HorizontalStackLayout 
                                 Spacing="15" Padding="30,0"
@@ -54,7 +58,7 @@
                         </ScrollView>
                         <Grid HeightRequest="44">
                             <Label Text="Tasks" Style="{StaticResource Title2}" VerticalOptions="Center"/>
-                            <ImageButton 
+                            <ImageButton                                
                                 Source="{StaticResource IconClean}"
                                 HorizontalOptions="End"
                                 VerticalOptions="Center"
@@ -69,7 +73,8 @@
                             BindableLayout.ItemsSource="{Binding Tasks}">
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
-                                    <controls:TaskView TaskCompletedCommand="{Binding TaskCompletedCommand, Source={RelativeSource AncestorType={x:Type pageModels:MainPageModel}}, x:DataType=pageModels:MainPageModel}" />
+                                    <controls:TaskView                                      
+                                       TaskCompletedCommand="{Binding TaskCompletedCommand, Source={RelativeSource AncestorType={x:Type pageModels:MainPageModel}}, x:DataType=pageModels:MainPageModel}" />
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
                         </VerticalStackLayout>
