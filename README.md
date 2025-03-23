@@ -46,7 +46,7 @@ git clone https://github.com/vnobo/MauiPlate.git
 ```
 
 2. Install prerequisites
-- .NET 7.0 SDK or later
+- .NET 9.0 SDK or later
 - Visual Studio 2022 with MAUI workload
 - Required NuGet packages will be restored automatically
 
