@@ -48,7 +48,6 @@ public static class MauiProgram
 
         builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
         builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
-
         return builder.Build();
     }
 }

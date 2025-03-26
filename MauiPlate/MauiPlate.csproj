@@ -128,5 +128,20 @@
 		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
 		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.4" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\Langs\Resource1.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resource1.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\Langs\Resource1.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
 	
 </Project>
