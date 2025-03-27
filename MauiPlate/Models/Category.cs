@@ -1,9 +1,11 @@
+using SQLite;
 using System.Text.Json.Serialization;
 
 namespace MauiPlate.Models
 {
     public class Category
     {
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Color { get; set; } = "#FF0000";
