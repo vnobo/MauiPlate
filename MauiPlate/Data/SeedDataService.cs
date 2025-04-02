@@ -4,23 +4,14 @@ using Microsoft.Extensions.Logging;
 
 namespace MauiPlate.Data
 {
-    public class SeedDataService
+    public class SeedDataService(
+        ProjectRepository projectRepository,
+        TaskRepository taskRepository,
+        TagRepository tagRepository,
+        CategoryRepository categoryRepository,
+        ILogger<SeedDataService> logger)
     {
-        private readonly ProjectRepository _projectRepository;
-        private readonly TaskRepository _taskRepository;
-        private readonly TagRepository _tagRepository;
-        private readonly CategoryRepository _categoryRepository;
         private readonly string _seedDataFilePath = "SeedData.json";
-        private readonly ILogger<SeedDataService> _logger;
-
-        public SeedDataService(ProjectRepository projectRepository, TaskRepository taskRepository, TagRepository tagRepository, CategoryRepository categoryRepository, ILogger<SeedDataService> logger)
-        {
-            _projectRepository = projectRepository;
-            _taskRepository = taskRepository;
-            _tagRepository = tagRepository;
-            _categoryRepository = categoryRepository;
-            _logger = logger;
-        }
 
         public async Task LoadSeedDataAsync()
         {
@@ -35,7 +26,7 @@ namespace MauiPlate.Data
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error deserializing seed data");
+                logger.LogError(e, "Error deserializing seed data");
             }
 
             try
@@ -51,18 +42,18 @@ namespace MauiPlate.Data
 
                         if (project.Category is not null)
                         {
-                            await _categoryRepository.SaveItemAsync(project.Category);
+                            await categoryRepository.SaveItemAsync(project.Category);
                             project.CategoryID = project.Category.Id;
                         }
 
-                        await _projectRepository.SaveItemAsync(project);
+                        await projectRepository.SaveItemAsync(project);
 
                         if (project?.Tasks is not null)
                         {
                             foreach (var task in project.Tasks)
                             {
                                 task.ProjectID = project.ID;
-                                await _taskRepository.SaveItemAsync(task);
+                                await taskRepository.SaveItemAsync(task);
                             }
                         }
 
@@ -70,7 +61,7 @@ namespace MauiPlate.Data
                         {
                             foreach (var tag in project.Tags)
                             {
-                                await _tagRepository.SaveItemAsync(tag, project.ID);
+                                await tagRepository.SaveItemAsync(tag, project.ID);
                             }
                         }
                     }
@@ -78,7 +69,7 @@ namespace MauiPlate.Data
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error saving seed data");
+                logger.LogError(e, "Error saving seed data");
                 throw;
             }
         }
@@ -88,10 +79,10 @@ namespace MauiPlate.Data
             try
             {
                 await Task.WhenAll(
-                    _projectRepository.DropTableAsync(),
-                    _taskRepository.DropTableAsync(),
-                    _tagRepository.DropTableAsync(),
-                    _categoryRepository.DropTableAsync());
+                    projectRepository.DropTableAsync(),
+                    taskRepository.DropTableAsync(),
+                    tagRepository.DropTableAsync(),
+                    categoryRepository.DropTableAsync());
             }
             catch (Exception e)
             {
