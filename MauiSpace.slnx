@@ -1,0 +1,15 @@
+<Solution>
+  <Project Path="MauiPlate/MauiPlate.Droid/MauiPlate.Droid.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="MauiPlate/MauiPlate.iOS/MauiPlate.iOS.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="MauiPlate/MauiPlate.Mac/MauiPlate.Mac.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="MauiPlate/MauiPlate.WinUI/MauiPlate.WinUI.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="MauiPlate/MauiPlate/MauiPlate.csproj" />
+</Solution>
